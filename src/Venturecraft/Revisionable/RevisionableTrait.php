@@ -198,6 +198,7 @@ trait RevisionableTrait
                         $delete->delete();
                     }
                 }
+
                 $revision = new Revision;
                 \DB::table($revision->getTable())->insert($revisions);
             }
@@ -222,13 +223,14 @@ trait RevisionableTrait
         {
             $revisions[] = array(
                 'revisionable_type' => get_class($this),
-                'revisionable_id' => $this->getKey(),
-                'key' => 'created_at',
-                'old_value' => null,
-                'new_value' => $this->created_at,
-                'user_id' => $this->getUserId(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
+                'revisionable_id'   => $this->getKey(),
+                'key'               => 'created_at',
+                'old_value'         => null,
+                'new_value'         => $this->created_at,
+                'user_id'           => $this->getUserId(),
+                'created_at'        => new \DateTime(),
+                'updated_at'        => new \DateTime(),
+                'ip'                => \Request::ip(),
             );
 
             $revision = new Revision;
