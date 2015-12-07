@@ -221,12 +221,20 @@ trait RevisionableTrait
 
         if ((!isset($this->revisionEnabled) || $this->revisionEnabled))
         {
+            $changes_to_record = $this->changedRevisionableFields();
+
+            $newValue = array();
+
+            foreach ($changes_to_record as $key => $change) {
+                $newValue[$key] = $this->updatedData[$key];
+            }
+
             $revisions[] = array(
                 'revisionable_type' => get_class($this),
                 'revisionable_id'   => $this->getKey(),
                 'key'               => 'created_at',
                 'old_value'         => null,
-                'new_value'         => $this->created_at,
+                'new_value'         => json_encode($newValue),
                 'user_id'           => $this->getUserId(),
                 'created_at'        => new \DateTime(),
                 'updated_at'        => new \DateTime(),
@@ -235,10 +243,7 @@ trait RevisionableTrait
 
             $revision = new Revision;
             \DB::table($revision->getTable())->insert($revisions);
-
         }
-
-
     }
 
     /**
@@ -246,13 +251,22 @@ trait RevisionableTrait
      */
     public function postDelete()
     {
-        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)) {
+        if ((!isset($this->revisionEnabled) || $this->revisionEnabled)) 
+        {
+            $oldValue = array();
+
+            foreach ($this->updatedData as $key => $value) {
+                if ($this->isRevisionable($key) && !is_array($value)) {
+                    $oldValue[$key] = $this->updatedData[$key];
+                }
+            }
+
             $revisions[] = array(
                 'revisionable_type' => get_class($this),
                 'revisionable_id'   => $this->getKey(),
                 'key'               => 'deleted_at',
-                'old_value'         => null,
-                'new_value'         => $this->deleted_at,
+                'old_value'         => json_encode($oldValue),
+                'new_value'         => null,
                 'user_id'           => $this->getUserId(),
                 'created_at'        => new \DateTime(),
                 'updated_at'        => new \DateTime(),
