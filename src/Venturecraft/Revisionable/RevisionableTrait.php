@@ -191,7 +191,7 @@ trait RevisionableTrait
                 'ip'                => \Request::ip(),
             );
 
-            if (count($revisions) > 0) {
+            if (count($changes_to_record) > 0) {
                 if($LimitReached && $RevisionCleanup){
                     $toDelete = $this->revisionHistory()->orderBy('id','asc')->limit(count($revisions))->get();
                     foreach($toDelete as $delete){
