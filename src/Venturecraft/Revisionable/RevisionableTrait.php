@@ -172,20 +172,24 @@ trait RevisionableTrait
 
             $changes_to_record = $this->changedRevisionableFields();
 
-            $revisions = array();
+            $oldValue = array();
+            $newValue = array();
 
             foreach ($changes_to_record as $key => $change) {
-                $revisions[] = array(
-                    'revisionable_type' => get_class($this),
-                    'revisionable_id' => $this->getKey(),
-                    'key' => $key,
-                    'old_value' => array_get($this->originalData, $key),
-                    'new_value' => $this->updatedData[$key],
-                    'user_id' => $this->getUserId(),
-                    'created_at' => new \DateTime(),
-                    'updated_at' => new \DateTime(),
-                );
+                $oldValue[$key] = array_get($this->originalData, $key);
+                $newValue[$key] = $this->updatedData[$key];
             }
+
+            $revisions = array(
+                'revisionable_type' => get_class($this),
+                'revisionable_id'   => $this->getKey(),
+                'old_value'         => json_encode($oldValue),
+                'new_value'         => json_encode($newValue),
+                'user_id'           => $this->getUserId(),
+                'created_at'        => new \DateTime(),
+                'updated_at'        => new \DateTime(),
+                'ip'                => \Request::ip(),
+            );
 
             if (count($revisions) > 0) {
                 if($LimitReached && $RevisionCleanup){
