@@ -1,5 +1,3 @@
-<img src="http://venturecraft.com.au/wp-content/uploads/2015/09/REVISIONABLE.png" style="width: 100%" alt="Revisionable" />
-
 <a href="https://packagist.org/packages/venturecraft/revisionable">
     <img src="http://img.shields.io/github/tag/venturecraft/revisionable.svg?style=flat" style="vertical-align: text-top">
 </a>
@@ -29,10 +27,19 @@ Revisionable can also now be used [as a trait](#the-new-trait-based-implementati
 
 Revisionable is installable via [composer](http://getcomposer.org/doc/00-intro.md), the details are on [packagist, here.](https://packagist.org/packages/venturecraft/revisionable)
 
-Add the following to the `require` section of your projects composer.json file:
+Add the following to the `repositories` section of your project's `composer.json` file:
+
+```json
+"0": {
+    "type": "vcs",
+    "url": "https://github.com/sensorial-dev/revisionable"
+}
+```
+
+Add the following to the `require` section of your project's `composer.json` file:
 
 ```php
-"venturecraft/revisionable": "1.*",
+"venturecraft/revisionable": "dev-master",
 ```
 
 Run composer update to download the package
@@ -50,6 +57,18 @@ php artisan migrate --package=venturecraft/revisionable
 > If you're going to be migrating up and down completely a lot (using `migrate:refresh`), one thing you can do instead is to copy the migration file from the package to your `app/database` folder, and change the classname from `CreateRevisionsTable` to something like `CreateRevisionTable` (without the 's', otherwise you'll get an error saying there's a duplicate class)
 
 > `cp vendor/venturecraft/revisionable/src/migrations/2013_04_09_062329_create_revisions_table.php app/database/migrations/`
+
+## Lumen Integration
+
+To use this package in a Lumen application, make sure to add an alias to `\Illuminate\Support\Facades\Request` inside the `bootstrap\app.php` file, since it's not provided by default:
+
+```php
+$app->withFacades(true,
+    [
+        \Illuminate\Support\Facades\Request::class => 'Request'
+    ]
+);
+```
 
 ## Docs
 
