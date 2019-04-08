@@ -60,7 +60,7 @@ php artisan migrate --package=venturecraft/revisionable
 
 ## Lumen Integration
 
-To use this package in a Lumen application, make sure to add an alias to `\Illuminate\Support\Facades\Request` inside the `bootstrap\app.php` file, since it's not provided by default:
+To use this package with Lumen, make sure to add an alias to `\Illuminate\Support\Facades\Request` inside the `bootstrap\app.php` file, since it's not provided by default:
 
 ```php
 $app->withFacades(true,
