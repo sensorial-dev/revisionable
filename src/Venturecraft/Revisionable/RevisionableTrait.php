@@ -172,7 +172,6 @@ trait RevisionableTrait
 
             $getJsonData = function ($value) {
                 $jsonData = json_decode($value);
-                var_dump($jsonData);
                 if (is_array($jsonData) || is_object($jsonData)) return (array)$jsonData;
                 if (is_array($value) || is_object($value)) return (array)$value;
                 else return $value;
