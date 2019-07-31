@@ -170,19 +170,34 @@ trait RevisionableTrait
         if (((!isset($this->revisionEnabled) || $this->revisionEnabled) && $this->updating) && (!$LimitReached || $RevisionCleanup)) {
             // if it does, it means we're updating
 
+            $getJsonData = function ($value) {
+                $jsonData = json_decode($value);
+                if (is_array($jsonData) || is_object($jsonData)) return (array)$jsonData;
+                if (is_array($value) || is_object($value)) return (array)$value;
+                else return $value;
+            };
+
             $changes_to_record = $this->changedRevisionableFields();
 
             $oldValue = array();
             $newValue = array();
 
             foreach ($changes_to_record as $key => $change) {
-                $oldValue[$key] = array_get($this->originalData, $key);
-                $newValue[$key] = $this->updatedData[$key];
+                $originalData = $getJsonData(array_get($this->originalData, $key));
+                $updatedData  = $getJsonData(array_get($this->updatedData, $key));
+
+                if (is_array($originalData) && is_array($updatedData)) {
+                    $updatedData = array_filter(array_diff_assoc($updatedData, $originalData));
+                }
+
+                $oldValue[$key] = $originalData;
+                $newValue[$key] = $updatedData;
             }
 
             $revisions = array(
                 'revisionable_type' => get_class($this),
                 'revisionable_id'   => $this->getKey(),
+                'key'               => 'updated_at',
                 'old_value'         => json_encode($oldValue),
                 'new_value'         => json_encode($newValue),
                 'user_id'           => $this->getUserId(),
